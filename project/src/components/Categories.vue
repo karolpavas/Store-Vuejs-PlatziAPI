@@ -1,41 +1,45 @@
 <template>
+  <div>
     <h2>Categorías</h2>
-    <div class="categories">
-    <div v-for="category in categories" :key="category.id" class="category-item">
-        <a :href="'/categories/' + category.id">
-        <img :src="category.image" alt="{{ category.name }}">
-        </a>
+    <div class="categories" v-if="categories.length > 0">
+      <router-link
+        v-for="category in categories"
+        :key="category.id"
+        :to="{ name: category.name, params: { id: category.id } }"
+      >
+        <img :src="category.image" :alt="category.name">
         <h3>{{ category.name }}</h3>
+      </router-link>
     </div>
-    </div>
+  </div>
 </template>
-  
-<script>
-    import axios from 'axios';
 
-  export default {
-    name: 'HomeCategories',
-    data() {
-      return {
-        categories: [],
-      };
+<script>
+import axios from 'axios';
+
+export default {
+  name: 'HomeCategories',
+  data() {
+    return {
+      categories: [],
+    };
+  },
+  mounted() {
+    this.fetchCategories();
+  },
+  methods: {
+    async fetchCategories() {
+      try {
+        const response = await axios.get('https://api.escuelajs.co/api/v1/categories');
+        this.categories = response.data;
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
     },
-    mounted() {
-      this.fetchCategories();
-    },
-    methods: {
-      async fetchCategories() {
-        try {
-          const response = await axios.get('https://api.escuelajs.co/api/v1/categories');
-          this.categories = response.data;
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-        }
-      },
-    },
-  };
+  },
+};
 </script>
-  
+
 <style scoped>
 .categories {
   display: flex;
@@ -61,4 +65,3 @@
 }
 
 </style>
-  
